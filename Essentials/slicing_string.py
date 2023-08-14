@@ -33,8 +33,8 @@ print(cadena_volteada)
 #Extract name using Slice
 nombre = cadena_volteada[:12]
 nota = cadena_volteada[13:16]
-asignatura = cadena_volteada[17:]
-cadena_formateada = nombre + " ha sacado un "+nota +" en "+ asignatura
+materia = cadena_volteada[17:]
+cadena_formateada = nombre + " ha sacado un "+nota +" en "+ materia
 print(cadena_formateada)
 
 
