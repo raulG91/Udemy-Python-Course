@@ -16,5 +16,8 @@ with open("files/contactos.csv","w",newline="\n") as file:
 #Read file        
 with open("files/contactos.csv","r",newline="\n") as file: 
     reader = csv.reader(file,delimiter=",")
+    #Return a list for each line
     for contact in reader:
         print(contact)
+        
+        
