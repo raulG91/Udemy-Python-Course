@@ -1,9 +1,10 @@
-from typing import Union
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, APIRouter
 from pydantic import BaseModel
 
-app = FastAPI()
+#app = FastAPI()
+
+router = APIRouter(tags=["Users"])
 
 class User(BaseModel):
     #Use types  for all attributes
@@ -16,11 +17,11 @@ class User(BaseModel):
 
 users_list = [User(id=1,name="Raul",surname="Garcia",url="http://test.com",edad=35),User(id=2,name="Juan",surname="Garcia",url="http://juan.com",edad=20),User(id=3,name="Maria",surname="Garcia",url="http://maria.com",edad=31)]
 
-@app.get('/users')
+@router.get('/users')
 async def users():
     return users_list
 
-@app.get("/user/{id}") #Path
+@router.get("/user/{id}") #Path
 async def user(id:int):
     #Use python function filter to get element from the list
     user =  filter(lambda user: user.id == id, users_list)
@@ -29,7 +30,7 @@ async def user(id:int):
     except:
         return{"error": "No se ha encontrado el usuario" }
     
-@app.get("/userquery/")
+@router.get("/userquery/")
 async def user(id:int): #Query 
     #Use python function filter to get element from the list
     user =  filter(lambda user: user.id == id, users_list)
@@ -38,11 +39,11 @@ async def user(id:int): #Query
     except:
         return{"error": "No se ha encontrado el usuario" }
     
-@app.post("/user/",status_code=201) #Post
+@router.post("/user/",status_code=201) #Post
 async def new_user(user:User):
     users_list.append(user)
 
-@app.put("/user/") 
+@router.put("/user/") 
 async def update_user(user:User):
     encontrado = False
     for index,saved_user in enumerate(users_list):
@@ -56,7 +57,7 @@ async def update_user(user:User):
     
        
 
-@app.delete("/user/{id}")
+@router.delete("/user/{id}")
 async def delete_user(id:int):
     encontrado = False
     for index,saved_user in enumerate(users_list):

@@ -5,3 +5,6 @@ uvicorn main:app --reload --> Start the server uvicorn main is the name of the f
 - We should use types for all variables used in fastapi
 - if an object inherit from BaseModel, fastapi will transform the object into a JSON directly
 - HTTPException --> Clase used to create http status --> Use raise to trigger it
+
+-Router mechanism used to group APIs into one entrypoint
+- Prefix = Prefix shared for all endpoints in a router
