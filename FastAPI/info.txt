@@ -1,3 +1,7 @@
 uvicorn main:app --reload --> Start the server uvicorn main is the name of the file that contains FastAPI instance in this case instance is APP
 
 - Generate documentation in swagger --> Use /docs in the server
+
+- We should use types for all variables used in fastapi
+- if an object inherit from BaseModel, fastapi will transform the object into a JSON directly
+- HTTPException --> Clase used to create http status --> Use raise to trigger it
