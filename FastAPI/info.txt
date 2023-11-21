@@ -1,0 +1,3 @@
+uvicorn main:app --reload --> Start the server uvicorn main is the name of the file that contains FastAPI instance in this case instance is APP
+
+- Generate documentation in swagger --> Use /docs in the server
