@@ -8,3 +8,5 @@ uvicorn main:app --reload --> Start the server uvicorn main is the name of the f
 
 -Router mechanism used to group APIs into one entrypoint
 - Prefix = Prefix shared for all endpoints in a router
+
+ pip install python-multipart
