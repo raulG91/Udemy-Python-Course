@@ -42,7 +42,7 @@ async def new_user(user:User):
    del user_dict['id'] # Database will generate it
    #Use local database
    id = db_client.local.users.insert_one(user_dict).inserted_id
-   print(id)
+
     #Get the user created, _id is the id created by Mongo DB and transform the result to json
    new_user = user_schema(db_client.local.users.find_one({"_id":id}))
     #Create user from JSON, it is possible because inherit BaseModel
