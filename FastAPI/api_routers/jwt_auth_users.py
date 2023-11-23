@@ -1,19 +1,19 @@
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, status, APIRouter
 from pydantic import BaseModel
 #Security module
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from jose import jwt
+from jose import jwt,JWTError
 from passlib.context import CryptContext
 from datetime import timedelta,datetime
 
 #Algoritmo de encriptacion token jwt
 ALGORITHM = "HS256"
 #Token duration
-TOKEN_DURATION = 1
+TOKEN_DURATION = 5
 #Secret key
 SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
 
-app = FastAPI()
+router = APIRouter(prefix="/users_jwt",tags=["Users JWT"],responses={404: {"message":"No encontrado"}})
 
 #Algorthm used for password encryption
 crypt = CryptContext(schemes=["bcrypt"])
@@ -59,7 +59,7 @@ def search_user(username:str):
         return User(**users_db[username])   
 
 
-@app.post("/login")
+@router.post("/login")
 async def login(form:OAuth2PasswordRequestForm = Depends()):   
     user_db = users_db.get(form.username)
 
@@ -85,18 +85,28 @@ async def login(form:OAuth2PasswordRequestForm = Depends()):
     #User is authenticated
     return {"access_token": jwt.encode(access_token,SECRET_KEY,algorithm=ALGORITHM),"token_type": "bearer"}
 
-
-#Function to validate token, depends on oauth2 object that will generate token 
-async def current_user(token:str = Depends(oauth2)):
-    #Since our token is username, search if an user exists for that username
-    user = search_user_db(token)
+async def auth_user(token:str = Depends(oauth2)):
+    #Decrypt token to get username
+    try:
+        username = jwt.decode(token,SECRET_KEY,algorithms=[ALGORITHM]).get("sub")
+        if username is None:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="Credenciales autenticacion invalidas",headers={"WWW-Authenticate":"Bearer"}) 
+    except JWTError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="Credenciales autenticacion invalidas",headers={"WWW-Authenticate":"Bearer"})  
+  
+    user = search_user(username)
     if not user: 
       raise  HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="Credenciales autenticacion invalidas",headers={"WWW-Authenticate":"Bearer"})  
+    return user
+
+#Function to validate token, depends on oauth2 object that will generate token 
+async def current_user(user:User = Depends(auth_user)):
+
     if user.disabled:
         raise  HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="Usuario Inactivo")  
-    return search_user(token)
+    return user
 
-@app.get("/users/me")
+@router.get("/users/me")
 #Dependency criteria is defined by function current_user which return an User
 async def me(user:User = Depends(current_user)):
     return user
