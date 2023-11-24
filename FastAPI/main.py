@@ -16,3 +16,5 @@ app.mount("/static",StaticFiles(directory="static"),name="static")
 def read_root():
     return {"Hello": "World"}
 
+# Ini server uvicorn main:app --reload 
+# Generate documentation http://127.0.0.1:8000/docs
